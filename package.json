@@ -1,10 +1,10 @@
 {
-  "name": "glue-glue",
+  "name": "crud-list",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx webpack --mode=production && npx mkdirp target && spin js2wasm -o target/glue-glue.wasm dist/spin.js",
+    "build": "npx webpack --mode=production && npx mkdirp target && spin js2wasm -o target/crud-list.wasm dist/spin.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

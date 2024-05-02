@@ -50,7 +50,7 @@ export const handleRequest: HandleRequest = async function (
   }
   const message = body.message.text;
 
-  await sendTextMessage(message + " from bot", chatId, botToken);
+  await sendTextMessage(message + " from crud-list bot", chatId, botToken);
 
   return {
     status: 200,
