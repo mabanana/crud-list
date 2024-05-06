@@ -1,39 +1,33 @@
-## GlueBot
+## CRUD List
 
-A simple Telegram Bot using Fermyon Cloud, that echoes messages sent to it back to the user.
+A Telegram Bot using Fermyon Cloud, that stores messages sent to it and can display them back to the user.
 
 
-### Build
+### Usage
 
-```console
-npm install
-spin build
+Add https://t.me/mailsniffertelebot on telegram as a friend
+
+#### Commands
+
+Add a message
 ```
-web-cli may fail to install, in that case use `npm install -D webpack-cli`
-
-### Run
-
-Export the secret token variable into your environment for local testing:
-```console
-export SPIN_VARIABLE_TELEGRAM_BOT_TOKEN="<TELEGRAM_TOKEN>"
+/add <message>
 ```
-
-Use `spin up` or  `spin watch` to run the app and rebuild on any changes to `package.json` or the files in `src`.
-
-Use e.g. `curl -v http://127.0.0.1:3000` to test the endpoint.
-
-
-### Deploy
-
-Upload your secret token variable to you Fermyon Cloud App
-```console
-spin deploy --variable telegram_bot_token=<TELEGRAM_TOKEN>
+Display all messages and their unique ID
 ```
-
-### Setup Webhook
-
-```console
-curl --request POST --url https://api.telegram.org/bot<TELEGRAM_TOKEN>/setWebhook --header 'content-type: application/json' --data '{"url": "<LINK_YOU_GET_FROM_SERVERLESS_DEPLOY>"}'
+/list
+```
+Update an existing message using the unique ID
+```
+/update <message_id> <new_message>
+```
+Delete a message using the unique ID
+```
+/delete <message_id>
+```
+Delete all messages
+```
+/deletetable
 ```
 
-Now any message sent to your bot via Telegram will make requests to you Fermyon Cloud serverless deploy.
+
