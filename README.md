@@ -2,6 +2,9 @@
 
 A Telegram Bot using Fermyon Cloud, that stores messages sent to it and can display them back to the user.
 
+## Setup
+
+Refer to template repo: https://github.com/mabanana/glue-glue
 
 ### Usage
 
