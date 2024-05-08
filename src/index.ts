@@ -6,35 +6,13 @@ import {
   Sqlite,
 } from "@fermyon/spin-sdk";
 
-const TELEGRAM_API_URL = "https://api.telegram.org";
-
-interface TelegramUpdate {
-  message?: {
-    text?: string;
-    chat: {
-      id: number;
-    };
-  };
-}
-
-async function sendTextMessage(text: string, chatId: number, botToken: string) {
-  return fetch(TELEGRAM_API_URL + "/bot" + botToken + "/sendMessage", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: text,
-    }),
-  });
-}
+import * as Default from "./default";
 
 export const handleRequest: HandleRequest = async function (
   request: HttpRequest
 ): Promise<HttpResponse> {
   const botToken = Config.get("telegram_bot_token");
-  const body: TelegramUpdate = request.json();
+  const body: Default.TelegramUpdate = request.json();
 
   if (body.message === undefined) {
     return {
@@ -44,7 +22,7 @@ export const handleRequest: HandleRequest = async function (
   const chatId = body.message.chat.id;
 
   if (body.message.text === undefined) {
-    await sendTextMessage("Message text not found.", chatId, botToken);
+    await Default.sendTextMessage("Message text not found.", chatId, botToken);
     return {
       status: 200,
     };
@@ -56,7 +34,7 @@ export const handleRequest: HandleRequest = async function (
 
   if (message.startsWith("/add ")) {
     addMessage(message.slice(5));
-    sendTextMessage("Message added.", chatId, botToken);
+    Default.sendTextMessage("Message added.", chatId, botToken);
   } else if (message == "/list") {
     const messages = (await getMessages()).rows;
     if (!Array.isArray(messages) || messages.some((m) => !m.id || !m.message)) {
@@ -71,15 +49,15 @@ export const handleRequest: HandleRequest = async function (
     if (messages.length === 0) {
       messageList += "No messages found.";
     }
-    await sendTextMessage(messageList, chatId, botToken);
+    await Default.sendTextMessage(messageList, chatId, botToken);
   } else if (message.startsWith("/delete ")) {
     const id = parseInt(message.slice(8));
     deleteMessage(id);
-    sendTextMessage("Message deleted.", chatId, botToken);
+    Default.sendTextMessage("Message deleted.", chatId, botToken);
   } else if (message.startsWith("/update ")) {
     const parts = message.slice(8).split(" ");
     if (parts.length < 2 || isNaN(parseInt(parts[0]))) {
-      await sendTextMessage(
+      await Default.sendTextMessage(
         "Invalid format. Please use '/update id new_message'.",
         chatId,
         botToken
@@ -89,13 +67,17 @@ export const handleRequest: HandleRequest = async function (
       const newMessage = parts.slice(1).join(" ");
       console.log(id, newMessage);
       updateMessage(id, newMessage);
-      sendTextMessage("Message updated to: " + newMessage, chatId, botToken);
+      Default.sendTextMessage(
+        "Message updated to: " + newMessage,
+        chatId,
+        botToken
+      );
     }
   } else if (message.startsWith("/deletetable")) {
     deleteTable();
-    sendTextMessage("Table deleted.", chatId, botToken);
+    Default.sendTextMessage("Table deleted.", chatId, botToken);
   } else {
-    await sendTextMessage("Invalid command.", chatId, botToken);
+    await Default.sendTextMessage("Invalid command.", chatId, botToken);
   }
 
   return {
