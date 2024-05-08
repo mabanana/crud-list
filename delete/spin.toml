@@ -1,0 +1,18 @@
+spin_manifest_version = 2
+
+[application]
+authors = ["mabanana <aldwin.yu@hotmail.com>"]
+description = ""
+name = "delete"
+version = "0.1.0"
+
+[[trigger.http]]
+route = "/delete"
+component = "delete"
+
+[component.delete]
+source = "target/delete.wasm"
+exclude_files = ["**/node_modules"]
+[component.delete.build]
+command = "npm run build"
+watch = ["src/**/*.ts", "package.json"]

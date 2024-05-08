@@ -34,3 +34,23 @@ source = "add/target/add.wasm"
 command = "npm run build"
 workdir = "add"
 
+[[trigger.http]]
+route = "/list"
+component = "list"
+
+[component.list]
+source = "list/target/list.wasm"
+[component.list.build]
+command = "npm run build"
+workdir = "list"
+
+[[trigger.http]]
+route = "/update"
+component = "update"
+
+[component.update]
+source = "update/target/update.wasm"
+[component.update.build]
+command = "npm run build"
+workdir = "update"
+
