@@ -15,13 +15,22 @@ telegram_bot_token = { required = true }
 
 [component.crud-list]
 source = "target/crud-list.wasm"
-exclude_files = ["**/node_modules"]
+exclude_files = ["**/node_modules", "**/add"]
 allowed_outbound_hosts = [ "https://api.telegram.org" ]
 sqlite_databases = ["default"]
-
 [component.crud-list.build]
 command = "npm run build"
 watch = ["src/**/*.ts", "package.json"]
-
 [component.crud-list.variables]
 telegram_bot_token = "{{ telegram_bot_token }}"
+
+[[trigger.http]]
+route = "/add"
+component = "add"
+
+[component.add]
+source = "add/target/add.wasm"
+[component.add.build]
+command = "npm run build"
+workdir = "add"
+
