@@ -30,6 +30,7 @@ component = "add"
 
 [component.add]
 source = "add/target/add.wasm"
+sqlite_databases = ["default"]
 [component.add.build]
 command = "npm run build"
 workdir = "add"
@@ -40,6 +41,7 @@ component = "list"
 
 [component.list]
 source = "list/target/list.wasm"
+sqlite_databases = ["default"]
 [component.list.build]
 command = "npm run build"
 workdir = "list"
@@ -50,7 +52,19 @@ component = "update"
 
 [component.update]
 source = "update/target/update.wasm"
+sqlite_databases = ["default"]
 [component.update.build]
 command = "npm run build"
 workdir = "update"
+
+[[trigger.http]]
+route = "/delete"
+component = "delete"
+
+[component.delete]
+source = "delete/target/delete.wasm"
+sqlite_databases = ["default"]
+[component.delete.build]
+command = "npm run build"
+workdir = "delete"
 
