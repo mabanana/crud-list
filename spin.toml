@@ -68,3 +68,13 @@ sqlite_databases = ["default"]
 command = "npm run build"
 workdir = "delete"
 
+[[trigger.http]]
+route = "/messages"
+component = "messages"
+
+[component.messages]
+source = "messages/target/messages.wasm"
+[component.messages.build]
+command = "npm run build"
+workdir = "messages"
+
