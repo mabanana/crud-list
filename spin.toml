@@ -7,68 +7,6 @@ name = "crud-list"
 version = "0.1.0"
 
 [[trigger.http]]
-route = "/..."
-component = "crud-list"
-
-[variables]
-telegram_bot_token = { required = true }
-
-[component.crud-list]
-source = "target/crud-list.wasm"
-exclude_files = ["**/node_modules", "**/add"]
-allowed_outbound_hosts = [ "https://api.telegram.org" ]
-sqlite_databases = ["default"]
-[component.crud-list.build]
-command = "npm run build"
-watch = ["src/**/*.ts", "package.json", "messages/src/**/*.ts", "messages/package.json"]
-[component.crud-list.variables]
-telegram_bot_token = "{{ telegram_bot_token }}"
-
-# [[trigger.http]]
-# route = "/add"
-# component = "add"
-
-# [component.add]
-# source = "add/target/add.wasm"
-# sqlite_databases = ["default"]
-# [component.add.build]
-# command = "npm run build"
-# workdir = "add"
-
-# [[trigger.http]]
-# route = "/list"
-# component = "list"
-
-# [component.list]
-# source = "list/target/list.wasm"
-# sqlite_databases = ["default"]
-# [component.list.build]
-# command = "npm run build"
-# workdir = "list"
-
-# [[trigger.http]]
-# route = "/update"
-# component = "update"
-
-# [component.update]
-# source = "update/target/update.wasm"
-# sqlite_databases = ["default"]
-# [component.update.build]
-# command = "npm run build"
-# workdir = "update"
-
-# [[trigger.http]]
-# route = "/delete"
-# component = "delete"
-
-# [component.delete]
-# source = "delete/target/delete.wasm"
-# sqlite_databases = ["default"]
-# [component.delete.build]
-# command = "npm run build"
-# workdir = "delete"
-
-[[trigger.http]]
 route = "/messages"
 component = "messages"
 
@@ -76,6 +14,6 @@ component = "messages"
 source = "messages/target/messages.wasm"
 sqlite_databases = ["default"]
 [component.messages.build]
+watch = ["src/**/*.ts", "package.json"]
 command = "npm run build"
 workdir = "messages"
-
