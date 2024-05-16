@@ -91,8 +91,8 @@ function parseSlugFromURI(uri: string, resource: string): string {
   const uriParts = uri.split("/");
   const resourceIndex = uriParts.indexOf(resource);
 
-  if (resourceIndex != -1 && resourceIndex < uriParts.length - 1) {
-    const msgID = uriParts[resourceIndex + 1];
+  if (resourceIndex != -1) {
+    const msgID = uriParts[resourceIndex + 1] ?? "";
     if (msgID.length > 0) {
       return msgID;
     }
