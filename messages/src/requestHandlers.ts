@@ -88,15 +88,16 @@ function ifExists(conn: any, id: string): boolean {
 }
 
 function parseSlugFromURI(uri: string, resource: string): string {
-  if (uri[uri.length - 1] != "/") {
-    uri = uri + "/";
-  }
   const uriParts = uri.split("/");
   const resourceIndex = uriParts.indexOf(resource);
-  if (resourceIndex == uriParts.length - 1) {
-    return "";
+
+  if (resourceIndex != -1 && resourceIndex < uriParts.length - 1) {
+    const msgID = uriParts[resourceIndex + 1];
+    if (msgID.length > 0) {
+      return msgID;
+    }
   }
-  return uriParts[resourceIndex + 1];
+  return "";
 }
 
 export {
