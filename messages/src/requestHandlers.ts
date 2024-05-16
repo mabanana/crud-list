@@ -1,4 +1,4 @@
-import { HttpRequest, HttpResponse, Sqlite } from "@fermyon/spin-sdk";
+import { HttpResponse, Sqlite } from "@fermyon/spin-sdk";
 
 interface MessagePayload {
   message: string;
@@ -25,10 +25,8 @@ async function handleGetRequest(msgID: string): Promise<HttpResponse> {
   };
 }
 
-async function handlePostRequest(request: HttpRequest): Promise<HttpResponse> {
-  const requestBody = request.json() as MessagePayload;
+async function handlePostRequest(message: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
-  const message = requestBody.message;
   const id = Date.now();
   const createdAt = new Date().toISOString();
 
@@ -62,13 +60,11 @@ async function handleDeleteRequest(msgID: string): Promise<HttpResponse> {
 }
 
 async function handlePutRequest(
-  request: HttpRequest,
+  newMessage: string,
   msgID: string
 ): Promise<HttpResponse> {
-  const requestBody = request.json() as MessagePayload;
   const conn = Sqlite.openDefault();
   const id = msgID;
-  const newMessage = requestBody.message;
 
   if (ifExists(conn, id) == false) {
     return { status: 404 };
@@ -106,5 +102,5 @@ export {
   handleDeleteRequest,
   handlePutRequest,
   parseSlugFromURI,
-  ifExists,
+  MessagePayload,
 };

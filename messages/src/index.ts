@@ -5,6 +5,7 @@ import {
   handleDeleteRequest,
   handlePutRequest,
   parseSlugFromURI,
+  MessagePayload,
 } from "./requestHandlers";
 
 export const handleRequest: HandleRequest = async function (
@@ -16,12 +17,20 @@ export const handleRequest: HandleRequest = async function (
 
   if (method == "GET") {
     return handleGetRequest(msgID);
-  } else if (method == "POST") {
-    return handlePostRequest(request);
   } else if (method == "DELETE") {
     return handleDeleteRequest(msgID);
+  } else if (method == "POST") {
+    const requestBody = request.json() as MessagePayload;
+    if (requestBody.message == undefined) {
+      return { status: 400 };
+    }
+    return handlePostRequest(requestBody.message);
   } else if (method == "PUT") {
-    return handlePutRequest(request, msgID);
+    const requestBody = request.json() as MessagePayload;
+    if (requestBody.message == undefined) {
+      return { status: 400 };
+    }
+    return handlePutRequest(requestBody.message, msgID);
   }
 
   return {
