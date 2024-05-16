@@ -2,7 +2,6 @@ import { HttpRequest, HttpResponse, Sqlite } from "@fermyon/spin-sdk";
 
 interface MessagePayload {
   message: string;
-
   token: string;
 }
 
@@ -12,11 +11,7 @@ async function handleGetRequest(msgID: string): Promise<HttpResponse> {
 
   if (msgID != "") {
     if (ifExists(conn, msgID) == false) {
-      return {
-        status: 404,
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ body: "Message not found!" }),
-      };
+      return { status: 404 };
     }
     table = await conn.execute("SELECT * FROM messages WHERE id = ?", [msgID]);
   } else {
@@ -60,11 +55,7 @@ async function handleDeleteRequest(msgID: string): Promise<HttpResponse> {
   const id = msgID;
 
   if (ifExists(conn, id) == false) {
-    return {
-      status: 404,
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ body: "Message not found!" }),
-    };
+    return { status: 404 };
   }
 
   await conn.execute("DELETE FROM messages WHERE id = ?", [id]);
@@ -82,11 +73,7 @@ async function handlePutRequest(
   const newMessage = requestBody.message;
 
   if (ifExists(conn, id) == false) {
-    return {
-      status: 404,
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ body: "Message not found!" }),
-    };
+    return { status: 404 };
   }
 
   await conn.execute("UPDATE messages SET message = ? WHERE id = ?", [
@@ -99,10 +86,7 @@ async function handlePutRequest(
 
 function ifExists(conn: any, id: string): boolean {
   const table = conn.execute("SELECT * FROM messages WHERE id = ?", [id]);
-  if (table.rows.length == 0) {
-    return false;
-  }
-  return true;
+  return table.rows.length > 0;
 }
 
 function parseSlugFromURI(uri: string, resource: string): string {
