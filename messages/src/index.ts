@@ -33,9 +33,5 @@ export const handleRequest: HandleRequest = async function (
     return handlePutRequest(requestBody.message, msgID);
   }
 
-  return {
-    status: 400,
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ body: "Invalid request!" }),
-  };
+  return { status: 400 };
 };
