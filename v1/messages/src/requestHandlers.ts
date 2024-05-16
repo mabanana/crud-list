@@ -39,7 +39,7 @@ async function handlePostRequest(message: string): Promise<HttpResponse> {
     status: 200,
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      message_id: id,
+      messageId: id,
       createdAt: createdAt,
       message: message,
     }),
