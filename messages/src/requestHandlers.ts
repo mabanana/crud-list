@@ -44,7 +44,7 @@ async function handlePostRequest(request: HttpRequest): Promise<HttpResponse> {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       message_id: id,
-      created_at: createdAt,
+      createdAt: createdAt,
       message: message,
     }),
   };
