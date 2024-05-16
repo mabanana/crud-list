@@ -18,12 +18,10 @@ async function handleGetRequest(msgID: string): Promise<HttpResponse> {
     table = await conn.execute("SELECT * FROM messages", []);
   }
 
-  const rows = tableToRows(table);
-
   return {
     status: 200,
     headers: { "content-type": "application/json" },
-    body: JSON.stringify(rows),
+    body: JSON.stringify(table.rows),
   };
 }
 
@@ -101,22 +99,11 @@ function parseSlugFromURI(uri: string, resource: string): string {
   return uriParts[resourceIndex + 1];
 }
 
-function tableToRows(table: any): any[] {
-  let rows: any[] = new Array(table.rows.length);
-
-  for (let i = 0; i < table.rows.length; i++) {
-    rows[i] = table.rows[i].id + " : " + table.rows[i].message;
-  }
-
-  return rows;
-}
-
 export {
   handleGetRequest,
   handlePostRequest,
   handleDeleteRequest,
   handlePutRequest,
   parseSlugFromURI,
-  tableToRows,
   ifExists,
 };
