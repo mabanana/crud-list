@@ -14,6 +14,6 @@ component = "messages"
 source = "messages/target/messages.wasm"
 sqlite_databases = ["default"]
 [component.messages.build]
-watch = ["src/**/*.ts", "package.json", "spin.toml"]
+watch = ["src/**/*.ts"]
 command = "npm run build"
 workdir = "messages"
