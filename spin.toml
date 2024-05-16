@@ -7,13 +7,13 @@ name = "crud-list"
 version = "0.1.0"
 
 [[trigger.http]]
-route = "/messages"
+route = "/v1/messages/..."
 component = "messages"
 
 [component.messages]
-source = "messages/target/messages.wasm"
+source = "v1/messages/target/messages.wasm"
 sqlite_databases = ["default"]
 [component.messages.build]
-watch = ["src/**/*.ts", "package.json"]
+watch = ["src/**/*.ts"]
 command = "npm run build"
-workdir = "messages"
+workdir = "v1/messages"
