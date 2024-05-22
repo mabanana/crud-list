@@ -17,3 +17,15 @@ sqlite_databases = ["default"]
 watch = ["src/**/*.ts"]
 command = "npm run build"
 workdir = "v1/messages"
+
+[[trigger.http]]
+route = "/v1/users/..."
+component = "users"
+
+[component.users]
+source = "v1/users/target/users.wasm"
+sqlite_databases = ["default"]
+[component.users.build]
+watch = ["src/**/*.ts"]
+command = "npm run build"
+workdir = "v1/users"
