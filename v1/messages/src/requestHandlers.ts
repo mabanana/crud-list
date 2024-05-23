@@ -30,6 +30,8 @@ async function handlePostRequest(message: string): Promise<HttpResponse> {
   const id = Date.now();
   const createdAt = new Date().toISOString();
 
+  await conn.execute("CREATE TABLE IF NOT EXISTS messages (id, message)", []);
+
   await conn.execute("INSERT INTO messages (id, message) VALUES (?,?)", [
     id,
     message,
@@ -96,11 +98,50 @@ function parseSlugFromURI(uri: string, resource: string): string {
   return "";
 }
 
+function parseAuthorizationHeader(auth: string): string | undefined {
+  if (auth == undefined) {
+    return undefined;
+  }
+  if (auth.startsWith("Basic ")) {
+    let authID = auth.substring(6);
+
+    for (let i = 0; i < authID.length; i++) {
+      if (isNaN(Number(authID[i]))) {
+        console.log("Invalid authID: " + authID[i]);
+        return undefined;
+      }
+      return authID;
+    }
+  }
+  return undefined;
+}
+
+async function isUserAuth(
+  host: string,
+  authID: string | undefined
+): Promise<boolean> {
+  if (authID == undefined || authID == "") {
+    return false;
+  }
+  const response = await fetch(host + "users/" + authID, {
+    method: "GET",
+  });
+  return response.status == 200;
+}
+
+function parseHostname(url: string): string {
+  const componentName = "messages";
+  return url.substring(0, url.indexOf(componentName));
+}
+
 export {
   handleGetRequest,
   handlePostRequest,
   handleDeleteRequest,
   handlePutRequest,
   parseSlugFromURI,
+  parseAuthorizationHeader,
   MessagePayload,
+  isUserAuth,
+  parseHostname,
 };
