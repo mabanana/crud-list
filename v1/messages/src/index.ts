@@ -22,7 +22,9 @@ export const handleRequest: HandleRequest = async function (
   const url = request.headers["spin-full-url"];
   const host = parseHostname(url);
 
-  if (!(await isUserAuth(host, authID))) {
+  if (authID === null) {
+    return { status: 400 };
+  } else if (!(await isUserAuth(host, authID))) {
     return { status: 401 };
   }
 

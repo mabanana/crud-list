@@ -4,13 +4,14 @@ interface MessagePayload {
   message: string;
   token: string;
 }
+const validURLCharacters = /^[A-Za-z0-9\-._~:/?#[\]@!$&'()*+,;=]*$/;
 
 async function handleGetRequest(msgID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
   let table: any;
 
   if (msgID != "") {
-    if (ifExists(conn, msgID) == false) {
+    if (ifExists(conn, msgID) === false) {
       return { status: 404 };
     }
     table = await conn.execute("SELECT * FROM messages WHERE id = ?", [msgID]);
@@ -52,7 +53,7 @@ async function handleDeleteRequest(msgID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
   const id = msgID;
 
-  if (ifExists(conn, id) == false) {
+  if (ifExists(conn, id) === false) {
     return { status: 404 };
   }
 
@@ -68,7 +69,7 @@ async function handlePutRequest(
   const conn = Sqlite.openDefault();
   const id = msgID;
 
-  if (ifExists(conn, id) == false) {
+  if (ifExists(conn, id) === false) {
     return { status: 404 };
   }
 
@@ -98,35 +99,32 @@ function parseSlugFromURI(uri: string, resource: string): string {
   return "";
 }
 
-function parseAuthorizationHeader(auth: string): string | undefined {
-  if (auth == undefined) {
-    return undefined;
+function parseAuthorizationHeader(auth: string): string | null {
+  if (auth === undefined) {
+    return null;
   }
   if (auth.startsWith("Basic ")) {
     let authID = auth.substring(6);
 
-    for (let i = 0; i < authID.length; i++) {
-      if (isNaN(Number(authID[i]))) {
-        console.log("Invalid authID: " + authID[i]);
-        return undefined;
-      }
-      return authID;
+    if (!validURLCharacters.test(authID)) {
+      return null;
     }
+    return authID;
   }
-  return undefined;
+  return null;
 }
 
 async function isUserAuth(
   host: string,
-  authID: string | undefined
+  authID: string | null
 ): Promise<boolean> {
-  if (authID == undefined || authID == "") {
+  if (authID === null || authID === "") {
     return false;
   }
   const response = await fetch(host + "users/" + authID, {
     method: "GET",
   });
-  return response.status == 200;
+  return response.status === 200;
 }
 
 function parseHostname(url: string): string {
