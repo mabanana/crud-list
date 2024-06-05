@@ -5,6 +5,7 @@ interface MessagePayload {
   token: string;
 }
 const digitOnlyRegex = /^\d+$/;
+const COMPONENT_NAME = "messages";
 
 async function handleGetRequest(msgID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
@@ -94,12 +95,13 @@ function ifExists(conn: any, id: string): boolean {
   return table.rows.length > 0;
 }
 
-function parseSlugFromURI(uri: string, resource: string): string {
-  const uriParts = uri.split("/");
-  const resourceIndex = uriParts.indexOf(resource);
+function parseSlugFromURI(headers: Record<string, string>): string {
+  const url = headers["spin-full-url"];
+  const urlParts = url.split("/");
+  const resourceIndex = urlParts.indexOf(COMPONENT_NAME);
 
   if (resourceIndex != -1) {
-    const msgID = uriParts[resourceIndex + 1] ?? "";
+    const msgID = urlParts[resourceIndex + 1] ?? "";
     if (msgID.length > 0) {
       return msgID;
     }
@@ -107,7 +109,10 @@ function parseSlugFromURI(uri: string, resource: string): string {
   return "";
 }
 
-function parseBasicAuth(auth: string): string | null {
+function parseBasicAuth(auth: string | undefined): string | null {
+  if (auth === undefined) {
+    return null;
+  }
   if (auth.startsWith("Basic ")) {
     let authID = auth.substring(6);
 
@@ -119,9 +124,10 @@ function parseBasicAuth(auth: string): string | null {
   return null;
 }
 
-async function isUserAuth(url: string, auth: string): Promise<boolean> {
+async function isUserAuth(headers: Record<string, string>): Promise<boolean> {
+  const url = headers["spin-full-url"];
+  const auth = headers["authorization"];
   const authID = parseBasicAuth(auth);
-  console.log("authID: ", authID);
   if (authID === null || authID === "") {
     return false;
   }

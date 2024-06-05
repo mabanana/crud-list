@@ -1,5 +1,7 @@
 import { HttpResponse, Sqlite } from "@fermyon/spin-sdk";
 
+const COMPONENT_NAME = "users";
+
 interface MessagePayload {
   username: string;
   token: string;
@@ -125,12 +127,13 @@ function ifUserExists(conn: any, username: string): boolean {
   return table.rows.length > 0;
 }
 
-function parseSlugFromURI(uri: string, resource: string): string {
-  const uriParts = uri.split("/");
-  const resourceIndex = uriParts.indexOf(resource);
+function parseSlugFromURI(headers: Record<string, string>): string {
+  const url = headers["spin-full-url"];
+  const urlParts = url.split("/");
+  const resourceIndex = urlParts.indexOf(COMPONENT_NAME);
 
   if (resourceIndex != -1) {
-    const msgID = uriParts[resourceIndex + 1] ?? "";
+    const msgID = urlParts[resourceIndex + 1] ?? "";
     if (msgID.length > 0) {
       return msgID;
     }

@@ -12,8 +12,7 @@ export const handleRequest: HandleRequest = async function (
   request: HttpRequest
 ): Promise<HttpResponse> {
   const method = request.method;
-  const url = request.headers["spin-full-url"];
-  const userID = parseSlugFromURI(url, "users");
+  const userID = parseSlugFromURI(request.headers);
 
   if (method === "GET") {
     return handleGetRequest(userID);

@@ -12,15 +12,11 @@ import {
 export const handleRequest: HandleRequest = async function (
   request: HttpRequest
 ): Promise<HttpResponse> {
+  const msgID = parseSlugFromURI(request.headers);
   const method = request.method;
-  const url = request.headers["spin-full-url"];
-  const msgID = parseSlugFromURI(url, "messages");
-  const auth = request.headers.authorization ?? null;
-
-  if (!(await isUserAuth(url, auth))) {
+  if (!(await isUserAuth(request.headers))) {
     return { status: 401 };
   }
-
   if (method === "GET") {
     return handleGetRequest(msgID);
   } else if (method === "DELETE") {
