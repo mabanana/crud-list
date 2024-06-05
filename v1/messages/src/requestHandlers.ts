@@ -107,8 +107,9 @@ function parseSlugFromURI(headers: Record<string, string>): string {
   return "";
 }
 
-function parseUserID(auth: string | undefined): string | null {
-  if (auth === undefined) {
+function parseUserID(headers: Record<string, string>): string | null {
+  const auth = headers["authorization"] ?? null;
+  if (auth === null) {
     return null;
   }
   if (auth.startsWith("Basic ")) {
@@ -124,7 +125,7 @@ function parseUserID(auth: string | undefined): string | null {
 
 async function isUserAuth(headers: Record<string, string>): Promise<boolean> {
   const url = headers["spin-full-url"];
-  const authID = parseUserID(headers["authorization"]);
+  const authID = parseUserID(headers);
 
   if (authID === null || authID === "") {
     return false;
