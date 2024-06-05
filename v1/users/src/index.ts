@@ -12,25 +12,17 @@ export const handleRequest: HandleRequest = async function (
   request: HttpRequest
 ): Promise<HttpResponse> {
   const method = request.method;
-  const uri = request.uri;
-  const userID = parseSlugFromURI(uri, "users");
+  const url = request.headers["spin-full-url"];
+  const userID = parseSlugFromURI(url, "users");
 
-  if (method == "GET") {
+  if (method === "GET") {
     return handleGetRequest(userID);
-  } else if (method == "DELETE") {
+  } else if (method === "DELETE") {
     return handleDeleteRequest(userID);
-  } else if (method == "POST") {
-    const requestBody = request.json() as MessagePayload;
-    if (requestBody.username == undefined) {
-      return { status: 400 };
-    }
-    return handlePostRequest(requestBody.username);
-  } else if (method == "PUT") {
-    const requestBody = request.json() as MessagePayload;
-    if (requestBody.username == undefined) {
-      return { status: 400 };
-    }
-    return handlePutRequest(requestBody.username, userID);
+  } else if (method === "POST") {
+    return handlePostRequest(request.json() as MessagePayload);
+  } else if (method === "PUT") {
+    return handlePutRequest(request.json() as MessagePayload, userID);
   }
 
   return { status: 400 };

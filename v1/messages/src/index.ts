@@ -14,11 +14,10 @@ export const handleRequest: HandleRequest = async function (
   request: HttpRequest
 ): Promise<HttpResponse> {
   const method = request.method;
-  const uri = request.uri;
-  const msgID = parseSlugFromURI(uri, "messages");
-  const auth = request.headers.authorization ?? undefined;
-  const authID = parseAuthorizationHeader(auth);
   const url = request.headers["spin-full-url"];
+  const msgID = parseSlugFromURI(url, "messages");
+  const auth = request.headers.authorization ?? null;
+  const authID = parseAuthorizationHeader(auth);
 
   if (authID === null) {
     return { status: 400 };
@@ -26,22 +25,14 @@ export const handleRequest: HandleRequest = async function (
     return { status: 401 };
   }
 
-  if (method == "GET") {
+  if (method === "GET") {
     return handleGetRequest(msgID);
-  } else if (method == "DELETE") {
+  } else if (method === "DELETE") {
     return handleDeleteRequest(msgID);
-  } else if (method == "POST") {
-    const requestBody = request.json() as MessagePayload;
-    if (requestBody.message == undefined) {
-      return { status: 400 };
-    }
-    return handlePostRequest(requestBody.message);
-  } else if (method == "PUT") {
-    const requestBody = request.json() as MessagePayload;
-    if (requestBody.message == undefined) {
-      return { status: 400 };
-    }
-    return handlePutRequest(requestBody.message, msgID);
+  } else if (method === "POST") {
+    return handlePostRequest(request.json() as MessagePayload);
+  } else if (method === "PUT") {
+    return handlePutRequest(request.json() as MessagePayload, msgID);
   }
 
   return { status: 400 };

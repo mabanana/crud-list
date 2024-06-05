@@ -25,7 +25,12 @@ async function handleGetRequest(userID: string): Promise<HttpResponse> {
   };
 }
 
-async function handlePostRequest(username: string): Promise<HttpResponse> {
+async function handlePostRequest(
+  requestBody: MessagePayload
+): Promise<HttpResponse> {
+  if (requestBody.username === undefined) {
+    return { status: 400 };
+  }
   const conn = Sqlite.openDefault();
   const id = Date.now();
   const createdAt = new Date().toISOString();
@@ -38,7 +43,7 @@ async function handlePostRequest(username: string): Promise<HttpResponse> {
     []
   );
 
-  if (ifUserExists(conn, username)) {
+  if (ifUserExists(conn, requestBody.username)) {
     return {
       status: 200,
       headers: { "content-type": "application/json" },
@@ -50,7 +55,7 @@ async function handlePostRequest(username: string): Promise<HttpResponse> {
 
   await conn.execute("INSERT INTO users (id, username) VALUES (?,?)", [
     id,
-    username,
+    requestBody.username,
   ]);
 
   return {
@@ -59,7 +64,7 @@ async function handlePostRequest(username: string): Promise<HttpResponse> {
     body: JSON.stringify({
       usernameId: id,
       createdAt: createdAt,
-      username: username,
+      username: requestBody.username,
     }),
   };
 }
@@ -78,16 +83,19 @@ async function handleDeleteRequest(userID: string): Promise<HttpResponse> {
 }
 
 async function handlePutRequest(
-  newUsername: string,
+  requestBody: MessagePayload,
   msgID: string
 ): Promise<HttpResponse> {
+  if (requestBody.username === undefined) {
+    return { status: 400 };
+  }
   const conn = Sqlite.openDefault();
   const id = msgID;
 
   if (ifExists(conn, id) == false) {
     return { status: 404 };
   }
-  if (ifUserExists(conn, newUsername)) {
+  if (ifUserExists(conn, requestBody.username)) {
     return {
       status: 200,
       headers: { "content-type": "application/json" },
@@ -98,7 +106,7 @@ async function handlePutRequest(
   }
 
   await conn.execute("UPDATE users SET username = ? WHERE id = ?", [
-    newUsername,
+    requestBody.username,
     id,
   ]);
 

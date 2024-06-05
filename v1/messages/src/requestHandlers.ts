@@ -26,7 +26,12 @@ async function handleGetRequest(msgID: string): Promise<HttpResponse> {
   };
 }
 
-async function handlePostRequest(message: string): Promise<HttpResponse> {
+async function handlePostRequest(
+  requestBody: MessagePayload
+): Promise<HttpResponse> {
+  if (requestBody.message === undefined) {
+    return { status: 400 };
+  }
   const conn = Sqlite.openDefault();
   const id = Date.now();
   const createdAt = new Date().toISOString();
@@ -35,7 +40,7 @@ async function handlePostRequest(message: string): Promise<HttpResponse> {
 
   await conn.execute("INSERT INTO messages (id, message) VALUES (?,?)", [
     id,
-    message,
+    requestBody.message,
   ]);
 
   return {
@@ -44,7 +49,7 @@ async function handlePostRequest(message: string): Promise<HttpResponse> {
     body: JSON.stringify({
       messageId: id,
       createdAt: createdAt,
-      message: message,
+      message: requestBody.message,
     }),
   };
 }
@@ -63,9 +68,12 @@ async function handleDeleteRequest(msgID: string): Promise<HttpResponse> {
 }
 
 async function handlePutRequest(
-  newMessage: string,
+  requestBody: MessagePayload,
   msgID: string
 ): Promise<HttpResponse> {
+  if (requestBody.message === undefined) {
+    return { status: 400 };
+  }
   const conn = Sqlite.openDefault();
   const id = msgID;
 
@@ -74,7 +82,7 @@ async function handlePutRequest(
   }
 
   await conn.execute("UPDATE messages SET message = ? WHERE id = ?", [
-    newMessage,
+    requestBody.message,
     id,
   ]);
 
