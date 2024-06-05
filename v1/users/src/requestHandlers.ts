@@ -1,11 +1,10 @@
 import { HttpResponse, Sqlite } from "@fermyon/spin-sdk";
 
-const COMPONENT_NAME = "users";
-
 interface MessagePayload {
   username: string;
   token: string;
 }
+const COMPONENT_NAME = "users";
 
 async function handleGetRequest(userID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
@@ -73,28 +72,26 @@ async function handlePostRequest(
 
 async function handleDeleteRequest(userID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
-  const id = userID;
 
-  if (!ifExists(conn, id)) {
+  if (!ifExists(conn, userID)) {
     return { status: 404 };
   }
 
-  await conn.execute("DELETE FROM users WHERE id = ?", [id]);
+  await conn.execute("DELETE FROM users WHERE id = ?", [userID]);
 
   return { status: 200 };
 }
 
 async function handlePutRequest(
   requestBody: MessagePayload,
-  msgID: string
+  userID: string
 ): Promise<HttpResponse> {
   if (requestBody.username === undefined) {
     return { status: 400 };
   }
   const conn = Sqlite.openDefault();
-  const id = msgID;
 
-  if (!ifExists(conn, id)) {
+  if (!ifExists(conn, userID)) {
     return { status: 404 };
   }
   if (ifUserExists(conn, requestBody.username)) {
@@ -109,27 +106,25 @@ async function handlePutRequest(
 
   await conn.execute("UPDATE users SET username = ? WHERE id = ?", [
     requestBody.username,
-    id,
+    userID,
   ]);
 
   return { status: 200 };
 }
 
 function ifExists(conn: any, id: string): boolean {
-  const table = conn.execute("SELECT * FROM users WHERE id = ?", [id]);
-  return table.rows.length > 0;
+  return conn.execute("SELECT * FROM users WHERE id = ?", [id]).rows.length > 0;
 }
 
 function ifUserExists(conn: any, username: string): boolean {
-  const table = conn.execute("SELECT * FROM users WHERE username = ?", [
-    username,
-  ]);
-  return table.rows.length > 0;
+  return (
+    conn.execute("SELECT * FROM users WHERE username = ?", [username]).rows
+      .length > 0
+  );
 }
 
 function parseSlugFromURI(headers: Record<string, string>): string {
-  const url = headers["spin-full-url"];
-  const urlParts = url.split("/");
+  const urlParts = headers["spin-full-url"].split("/");
   const resourceIndex = urlParts.indexOf(COMPONENT_NAME);
 
   if (resourceIndex != -1) {

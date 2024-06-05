@@ -57,13 +57,12 @@ async function handlePostRequest(
 
 async function handleDeleteRequest(msgID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
-  const id = msgID;
 
-  if (!ifExists(conn, id)) {
+  if (!ifExists(conn, msgID)) {
     return { status: 404 };
   }
 
-  await conn.execute("DELETE FROM messages WHERE id = ?", [id]);
+  await conn.execute("DELETE FROM messages WHERE id = ?", [msgID]);
 
   return { status: 200 };
 }
@@ -76,28 +75,27 @@ async function handlePutRequest(
     return { status: 400 };
   }
   const conn = Sqlite.openDefault();
-  const id = msgID;
 
-  if (!ifExists(conn, id)) {
+  if (!ifExists(conn, msgID)) {
     return { status: 404 };
   }
 
   await conn.execute("UPDATE messages SET message = ? WHERE id = ?", [
     requestBody.message,
-    id,
+    msgID,
   ]);
 
   return { status: 200 };
 }
 
 function ifExists(conn: any, id: string): boolean {
-  const table = conn.execute("SELECT * FROM messages WHERE id = ?", [id]);
-  return table.rows.length > 0;
+  return (
+    conn.execute("SELECT * FROM messages WHERE id = ?", [id]).rows.length > 0
+  );
 }
 
 function parseSlugFromURI(headers: Record<string, string>): string {
-  const url = headers["spin-full-url"];
-  const urlParts = url.split("/");
+  const urlParts = headers["spin-full-url"].split("/");
   const resourceIndex = urlParts.indexOf(COMPONENT_NAME);
 
   if (resourceIndex != -1) {
@@ -126,21 +124,16 @@ function parseUserID(auth: string | undefined): string | null {
 
 async function isUserAuth(headers: Record<string, string>): Promise<boolean> {
   const url = headers["spin-full-url"];
-  const auth = headers["authorization"];
-  const authID = parseUserID(auth);
+  const authID = parseUserID(headers["authorization"]);
+
   if (authID === null || authID === "") {
     return false;
   }
-  const host = parseHostname(url);
+  const host = url.substring(0, url.indexOf(COMPONENT_NAME));
   const response = await fetch(host + "users/" + authID, {
     method: "GET",
   });
   return response.status === 200;
-}
-
-function parseHostname(url: string): string {
-  const componentName = "messages";
-  return url.substring(0, url.indexOf(componentName));
 }
 
 export {
