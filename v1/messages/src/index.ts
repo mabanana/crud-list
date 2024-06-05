@@ -19,9 +19,7 @@ export const handleRequest: HandleRequest = async function (
   const auth = request.headers.authorization ?? null;
   const authID = parseAuthorizationHeader(auth);
 
-  if (authID === null) {
-    return { status: 400 };
-  } else if (!(await isUserAuth(url, authID))) {
+  if (!(await isUserAuth(url, authID))) {
     return { status: 401 };
   }
 

@@ -4,14 +4,14 @@ interface MessagePayload {
   message: string;
   token: string;
 }
-const validURLCharacters = /^[A-Za-z0-9\-._~:/?#[\]@!$&'()*+,;=]*$/;
+const digitOnlyRegex = /^\d+$/;
 
 async function handleGetRequest(msgID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
   let table: any;
 
   if (msgID != "") {
-    if (ifExists(conn, msgID) === false) {
+    if (ifExists(conn, msgID)) {
       return { status: 404 };
     }
     table = await conn.execute("SELECT * FROM messages WHERE id = ?", [msgID]);
@@ -58,7 +58,7 @@ async function handleDeleteRequest(msgID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
   const id = msgID;
 
-  if (ifExists(conn, id) === false) {
+  if (ifExists(conn, id)) {
     return { status: 404 };
   }
 
@@ -77,7 +77,7 @@ async function handlePutRequest(
   const conn = Sqlite.openDefault();
   const id = msgID;
 
-  if (ifExists(conn, id) === false) {
+  if (ifExists(conn, id)) {
     return { status: 404 };
   }
 
@@ -114,7 +114,7 @@ function parseAuthorizationHeader(auth: string): string | null {
   if (auth.startsWith("Basic ")) {
     let authID = auth.substring(6);
 
-    if (!validURLCharacters.test(authID)) {
+    if (!digitOnlyRegex.test(authID)) {
       return null;
     }
     return authID;
