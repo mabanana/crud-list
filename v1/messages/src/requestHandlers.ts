@@ -107,10 +107,7 @@ function parseSlugFromURI(uri: string, resource: string): string {
   return "";
 }
 
-function parseAuthorizationHeader(auth: string): string | null {
-  if (auth === undefined) {
-    return null;
-  }
+function parseBasicAuth(auth: string): string | null {
   if (auth.startsWith("Basic ")) {
     let authID = auth.substring(6);
 
@@ -122,10 +119,8 @@ function parseAuthorizationHeader(auth: string): string | null {
   return null;
 }
 
-async function isUserAuth(
-  url: string,
-  authID: string | null
-): Promise<boolean> {
+async function isUserAuth(url: string, auth: string): Promise<boolean> {
+  const authID = parseBasicAuth(auth);
   if (authID === null || authID === "") {
     return false;
   }
@@ -147,7 +142,6 @@ export {
   handleDeleteRequest,
   handlePutRequest,
   parseSlugFromURI,
-  parseAuthorizationHeader,
   MessagePayload,
   isUserAuth,
 };

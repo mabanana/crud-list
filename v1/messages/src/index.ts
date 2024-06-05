@@ -6,7 +6,6 @@ import {
   handlePutRequest,
   parseSlugFromURI,
   MessagePayload,
-  parseAuthorizationHeader,
   isUserAuth,
 } from "./requestHandlers";
 
@@ -17,9 +16,8 @@ export const handleRequest: HandleRequest = async function (
   const url = request.headers["spin-full-url"];
   const msgID = parseSlugFromURI(url, "messages");
   const auth = request.headers.authorization ?? null;
-  const authID = parseAuthorizationHeader(auth);
 
-  if (!(await isUserAuth(url, authID))) {
+  if (!(await isUserAuth(url, auth))) {
     return { status: 401 };
   }
 
