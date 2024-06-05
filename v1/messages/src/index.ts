@@ -7,7 +7,6 @@ import {
   parseSlugFromURI,
   MessagePayload,
   parseAuthorizationHeader,
-  parseHostname,
   isUserAuth,
 } from "./requestHandlers";
 
@@ -20,11 +19,10 @@ export const handleRequest: HandleRequest = async function (
   const auth = request.headers.authorization ?? undefined;
   const authID = parseAuthorizationHeader(auth);
   const url = request.headers["spin-full-url"];
-  const host = parseHostname(url);
 
   if (authID === null) {
     return { status: 400 };
-  } else if (!(await isUserAuth(host, authID))) {
+  } else if (!(await isUserAuth(url, authID))) {
     return { status: 401 };
   }
 

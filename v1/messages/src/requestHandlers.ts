@@ -115,12 +115,13 @@ function parseAuthorizationHeader(auth: string): string | null {
 }
 
 async function isUserAuth(
-  host: string,
+  url: string,
   authID: string | null
 ): Promise<boolean> {
   if (authID === null || authID === "") {
     return false;
   }
+  const host = parseHostname(url);
   const response = await fetch(host + "users/" + authID, {
     method: "GET",
   });
@@ -141,5 +142,4 @@ export {
   parseAuthorizationHeader,
   MessagePayload,
   isUserAuth,
-  parseHostname,
 };
