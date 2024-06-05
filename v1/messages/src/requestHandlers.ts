@@ -11,7 +11,7 @@ async function handleGetRequest(msgID: string): Promise<HttpResponse> {
   let table: any;
 
   if (msgID != "") {
-    if (ifExists(conn, msgID)) {
+    if (!ifExists(conn, msgID)) {
       return { status: 404 };
     }
     table = await conn.execute("SELECT * FROM messages WHERE id = ?", [msgID]);
@@ -58,7 +58,7 @@ async function handleDeleteRequest(msgID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
   const id = msgID;
 
-  if (ifExists(conn, id)) {
+  if (!ifExists(conn, id)) {
     return { status: 404 };
   }
 
@@ -77,7 +77,7 @@ async function handlePutRequest(
   const conn = Sqlite.openDefault();
   const id = msgID;
 
-  if (ifExists(conn, id)) {
+  if (!ifExists(conn, id)) {
     return { status: 404 };
   }
 
@@ -121,6 +121,7 @@ function parseBasicAuth(auth: string): string | null {
 
 async function isUserAuth(url: string, auth: string): Promise<boolean> {
   const authID = parseBasicAuth(auth);
+  console.log("authID: ", authID);
   if (authID === null || authID === "") {
     return false;
   }

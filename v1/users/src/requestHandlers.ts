@@ -10,7 +10,7 @@ async function handleGetRequest(userID: string): Promise<HttpResponse> {
   let table: any;
 
   if (userID != "") {
-    if (ifExists(conn, userID)) {
+    if (!ifExists(conn, userID)) {
       return { status: 404 };
     }
     table = await conn.execute("SELECT * FROM users WHERE id = ?", [userID]);
@@ -73,7 +73,7 @@ async function handleDeleteRequest(userID: string): Promise<HttpResponse> {
   const conn = Sqlite.openDefault();
   const id = userID;
 
-  if (ifExists(conn, id)) {
+  if (!ifExists(conn, id)) {
     return { status: 404 };
   }
 
@@ -92,7 +92,7 @@ async function handlePutRequest(
   const conn = Sqlite.openDefault();
   const id = msgID;
 
-  if (ifExists(conn, id)) {
+  if (!ifExists(conn, id)) {
     return { status: 404 };
   }
   if (ifUserExists(conn, requestBody.username)) {
