@@ -13,7 +13,20 @@ component = "messages"
 [component.messages]
 source = "v1/messages/target/messages.wasm"
 sqlite_databases = ["default"]
+allowed_outbound_hosts = ["http://127.0.0.1:3000", "https://crud-list.fermyon.app"]
 [component.messages.build]
 watch = ["src/**/*.ts"]
 command = "npm run build"
 workdir = "v1/messages"
+
+[[trigger.http]]
+route = "/v1/users/..."
+component = "users"
+
+[component.users]
+source = "v1/users/target/users.wasm"
+sqlite_databases = ["default"]
+[component.users.build]
+watch = ["src/**/*.ts"]
+command = "npm run build"
+workdir = "v1/users"

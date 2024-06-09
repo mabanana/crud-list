@@ -6,25 +6,22 @@ import {
   handlePutRequest,
   parseSlugFromURI,
   MessagePayload,
-  isUserAuth,
 } from "./requestHandlers";
 
 export const handleRequest: HandleRequest = async function (
   request: HttpRequest
 ): Promise<HttpResponse> {
-  const msgID = parseSlugFromURI(request.headers);
   const method = request.method;
-  if (!(await isUserAuth(request.headers))) {
-    return { status: 401 };
-  }
+  const userID = parseSlugFromURI(request.headers);
+
   if (method === "GET") {
-    return handleGetRequest(msgID);
+    return handleGetRequest(userID);
   } else if (method === "DELETE") {
-    return handleDeleteRequest(msgID);
+    return handleDeleteRequest(userID);
   } else if (method === "POST") {
     return handlePostRequest(request.json() as MessagePayload);
   } else if (method === "PUT") {
-    return handlePutRequest(request.json() as MessagePayload, msgID);
+    return handlePutRequest(request.json() as MessagePayload, userID);
   }
 
   return { status: 400 };
